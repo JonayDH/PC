@@ -1,0 +1,168 @@
+# Instrucciones para usar MIPS:
+
+
+
+# Video explicativo parte 1 instrucciones:
+# https://tuvideo.txs.es/w/p/wuieoR2JdoRCKC7YR8AfAq?playlistPosition=2&resume=true
+
+# Instrucciones de movimientos de datos:
+
+lw $t5,etiqueta # "Load word" Carga "etiqueta" en $t5 ($t5 = etiqueta)
+sw $t4,etiqueta # "Save word" Guarda $t4 en "etiqueta" (etiqueta = $t4)
+
+li $t3,7 # "Load inmediate" Carga un entero en $t3 ($t3 = 7)
+la $t6,etiqueta # "Load address" Sirve para cargar la dirección de memoria de "etiqueta" en $t6 ($t6 = &etiqueta)
+
+move $t1,$t2 # "Move" Copia el valor de $t2 en $t1 ($t1 = $t2)
+
+mflo $t7 # "Move from lo" Mueve el contenido del registro especial LO al registro $t7 ($t7 = LO)
+mfhi $t4 # "Move from hi" Mueve el contenido del registro especial HI al registro $t4 ($t4 = HI)
+
+
+
+# Instrucciones de operaciones aritméticas con enteros:
+
+add $t2,$t3,$t4 # "Addition" Suma el contenido del registro $t3 y el registro $t4 y lo guarda en el registro $t2 ($t2 = $t3 + $t4)
+addi $t3,$t2,4 # Addition immediate" Suma el valor del registro $t2 y el número 4 y lo guarda en el registro $t3 ($t3 = $t2 + 4)
+addi $t4,1 # Suma 1 al valor del registro $t4 ($t4 += 1) / ($t4 = $t4 + 1)
+
+sub $s1,$t2,$s0 # "Subtract" Resta el contenido del registro $t2 y el registro $s0 y lo guarda en $s1 ($s1 = $t2 - $s0)
+
+mul $s3,$s4,$s5 # Multiplica el contenido del registro $s4 y $s5 y lo guarda en $s3. 
+                # Este solo guarda los 32 bits menos signitficativos, por lo que si trabajamos con números muy grandes podría 
+                # ser un problema ($s3 = $s4 * $s5)
+mult $t6,$t7 # Multiplica el contenido del registro $t6 y $t7. El resultado se almacena en los registros especiales.
+             # Los 32 bits más significativos en HI
+             # Los 32 bits menos significativos en LO
+
+div $s0,$s1,$s2 # Divide el contenido del registro $s1 y $s2 y almacena la parte entera en $s0 ($s0 = $s1 / $s2)
+div $s1,$s2 # Divide el contenido del registro $s1 y $s2. 
+            # El cociente lo coloca en LO (LO = $s1 / $s2)
+            # El resto lo coloca en HI (HI = $s1 % $s2)
+
+
+
+# Instrucciones de manipulación de bits (Funcionan como las puertas lógicas):
+
+and $t0,$t1,$t2 # Hace el "AND" bit a bit de $t1 y $t2 y lo almacena en $t0 ($t0 = $t1 & $t2)
+andi $t0,$t1,7 # Hace el "AND" bit a bit de $t1 y 7 y lo almacena en $t0 ($t0 = $t1 & 7)
+
+or $t0,$t1,$t2 # Hace el "OR" bit a bit de $t1 y $t2 y lo almacena en $t0 ($t0 = $t1 | $t2)
+ori $t0,$t1,0xF # Hace el "OR" bit a bit de $t1 y 0xF (número en hexadecimal) y lo almacena en $t0 ($t0 = $t1 | 0xF)
+
+xor $t0,$t1,$t2 # Hace el "XOR" bit a bit de $t1 y $t2 y lo almacena en $t0 ($t0 = $t1 ^ $t2)
+xori $t0,$t1,0xD # Hace el "XOR" bit a bit de $t1 y 0xD (número en hexadecimal) y lo almacena en $t0 ($t0 = $t1 ^ 0xD)
+
+not $t0,$t1 # Hace el "NOT" (invierte todos los bits) de $t1 y lo almacena en $t0 ($t0 = ~ $t1)
+
+sll $t3,$t4,2 # "Shift left logical" Desplaza dos bits a la izquierda el contenido del registro $t4 y se rellena con ceros por la derecha.
+              # El resultado se guarda en $t3 ($t3 = $t4 << 2)
+srl $t3,$t4,1 # "Shift right logical" Desplaza un bit a la derecha el contenido del registro $t3 y se rellena con ceros por la izquierda.
+              # El resultado de guarda en $t3 ($t3 = $t4 >> 1)
+
+
+# Video explicativo parte 2 instrucciones:
+# https://tuvideo.txs.es/w/p/wuieoR2JdoRCKC7YR8AfAq?playlistPosition=3
+
+
+
+# Estructuras de control:
+
+
+
+# Saltos en MIPS:
+
+
+
+# Saltos incondicionales (siempre se ejecutan):
+
+j etiqueta # "Jump" Salta a la línea del código que tenga "etiqueta:" (salto absoluto)
+b etiqueta # "Branch" Salta a la línea del código que tenga "etiqueta:" (salto relativo)
+jr $t3 # Salta a la dirección de programa contenida en $t3
+
+
+
+# Saltos condicionales (saltan a la etiqueta si se cumple la condición):
+
+
+
+# Normales:
+
+
+# Con Signo:
+
+blt $t0,$t1,etiqueta # "Less than" Si $t0 es menor que $t1 salta a "etiqueta:" (if ($t0 < $t1))
+ble $t0,$t1,etiqueta # "Less or equal" Si $t0 es menor o igual que $t1 salta a "etiqueta:" (if ($t0 <= $t1))
+
+beq $t0,$t1,etiqueta # "Equal" Si $t0 es igual a $t1 salta a "etiqueta:" (if ($t0 == $t1))
+bne $t0,$t1,etiqueta # "Not equal" Si $t0 no es igual a $t1 salta a "etiqueta:" (if ($t0 != $t1))
+
+bge $t0,$t1,etiqueta # "Greater or equal" Si $t0 es mayor o igual que $t1 salta a "etiqueta:" (if ($t0 >= $t1))
+bgt $t0,$t1,etiqueta # "Greater than" SI $t0 es mayor que $t1 salta a "etiqueta:" (if ($t0 > $t1))
+
+
+# Sin Signo:
+
+bltu $t0,$t1,etiqueta # "Less than unsigned" Si $t0 es menor que $t1 salta a "etiqueta:" (if ($t0 < $t1))
+bleu $t0,$t1,etiqueta # "Less or equal unsigned" Si $t0 es menor o igual que $t1 salta a "etiqueta:" (if ($t0 <= $t1))
+
+beq $t0,$t1,etiqueta # "Equal" Si $t0 es igual a $t1 salta a "etiqueta:" (if ($t0 == $t1))
+bne $t0,$t1,etiqueta # "Not equal" Si $t0 no es igual a $t1 salta a "etiqueta:" (if ($t0 != $t1))
+
+bgeu $t0,$t1,etiqueta # "Greater or equal unsigned" Si $t0 es mayor o igual que $t1 salta a "etiqueta:" (if ($t0 >= $t1))
+bgtu $t0,$t1,etiqueta # "Greater than unsigned" SI $t0 es mayor que $t1 salta a "etiqueta:" (if ($t0 > $t1))
+
+
+
+# Comparando con el cero:
+
+
+bltz $t0,etiqueta # "Lower than zero" Si $t0 es menor que cero salta a "etiqueta:" (if ($t0 < 0))
+blez $t0,etiqueta # "Lower or equal zero" Si $t0 es menor o igual que cero salta a "etiqueta:" (if ($t0 <= 0))
+
+beqz $t0,etiqueta # "Equal zero" Si $t0 es igual a cero salta a "etiqueta" (if ($t0 == 0))
+bnez $t0,etiqueta # "Not equal zero" Si $t0 no es igual a cero salta a "etiqueta" (if ($t0 != 0))
+
+bgez $t0,etiqueta # "Greater or equal zero" Si $t0 es mayor o igual a cero salta a "etiqueta:" (if ($t0 >= 0))
+bgtz $t0,etiqueta # "Greater than zero" Si $t0 es mayor que cero salta a "etiqueta:" (if ($t0 > 0))
+
+
+
+# Condiciones booleanas (Guardan 1 si se cumple y 0 si no):
+
+
+# Con signo:
+
+slt $t0,$t1,$t2 # "Less than" Si $t1 es menor que $t2, guarda un 1 en $t0, si no un 0 (if ($t1 < $t2))
+sle $t0,$t1,$t2 # "Less or equal" Si $t1 es menor o igual que $t2, guarda un 1 en $t0, si no un 0 (if ($t1 <= $t2))
+
+seq $t0,$t1,$t2 # "Equal" Si $t1 es igual que $t2, guarda un 1 en $t0, si no un 0 (if ($t1 == $t2))
+sne $t0,$t1,$t2 # "Not equal" Si $t1 no es igual que $t2, guarda un 1 en $t0, si no un 0 (if ($t1 != $t2))
+
+sge $t0,$t1,$t2 # "Greater or equal" Si $t1 es mayor o igual que $t2, guarda un 1 en $t0, si no un 0 (if ($t1 >= $t2))
+sgt $t0,$t1,$t2 # "Greater than" Si $t1 es mayor que $t2, guarda un 1 en $t0, si no un 0 (if ($t1 > $t2))
+
+
+# Sin signo:
+
+sltu $t0,$t1,$t2 # "Less than" Si $t1 es menor que $t2, guarda un 1 en $t0, si no un 0 (if ($t1 < $t2))
+sleu $t0,$t1,$t2 # "Less or equal" Si $t1 es menor o igual que $t2, guarda un 1 en $t0, si no un 0 (if ($t1 <= $t2))
+
+seq $t0,$t1,$t2 # "Equal" Si $t1 es igual que $t2, guarda un 1 en $t0, si no un 0 (if ($t1 == $t2))
+sne $t0,$t1,$t2 # "Not equal" Si $t1 no es igual que $t2, guarda un 1 en $t0, si no un 0 (if ($t1 != $t2))
+
+sgeu $t0,$t1,$t2 # "Greater or equal" Si $t1 es mayor o igual que $t2, guarda un 1 en $t0, si no un 0 (if ($t1 >= $t2))
+sgtu $t0,$t1,$t2 # "Greater than" Si $t1 es mayor que $t2, guarda un 1 en $t0, si no un 0 (if ($t1 > $t2))
+
+
+# Instrucciones de manipulación de bits con condiciones booleanas:
+
+and $t0,$t1,$t2 # Hace el "AND" bit a bit de $t1 y $t2 y lo almacena en $t0 ($t0 = $t1 & $t2)
+
+or $t0,$t1,$t2 # Hace el "OR" bit a bit de $t1 y $t2 y lo almacena en $t0 ($t0 = $t1 | $t2)
+
+xor $t0,$t1,$t2 # Hace el "XOR" bit a bit de $t1 y $t2 y lo almacena en $t0 ($t0 = $t1 ^ $t2)
+
+not $t0,$t1,$t2 # Hace el "NOR" (invierte todos los bits) de $t1 y $t2 y lo almacena en $t0 ($t0 = ~($t1 | $t2))
+
+not $t0,$t1 # Hace el "NOT" (invierte todos los bits) de $t1 y lo almacena en $t0 ($t0 = ~ $t1)
