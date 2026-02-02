@@ -22,20 +22,20 @@ mfhi $t4 # "Move from hi" Mueve el contenido del registro especial HI al registr
 
 # Instrucciones de operaciones aritméticas con enteros:
 
-add $t2,$t3,$t4 # "Addition" Suma el contenido del registro $t3 y el registro $t4 y lo guarda en el registro $t2 ($t2 = $t3 + $t4)
-addi $t3,$t2,4 # Addition immediate" Suma el valor del registro $t2 y el número 4 y lo guarda en el registro $t3 ($t3 = $t2 + 4)
-addi $t4,1 # Suma 1 al valor del registro $t4 ($t4 += 1) / ($t4 = $t4 + 1)
+add $t2,$t3,$t4 # "Addition" Suma el contenido $t3 y $t4 y lo guarda en $t2 ($t2 = $t3 + $t4)
+addi $t3,$t2,4 # Addition immediate" Suma el contenido $t2 y 4 y lo guarda $t3 ($t3 = $t2 + 4)
+addi $t4,1 # Suma 1 al valor de $t4 ($t4 += 1) / ($t4 = $t4 + 1)
 
-sub $s1,$t2,$s0 # "Subtract" Resta el contenido del registro $t2 y el registro $s0 y lo guarda en $s1 ($s1 = $t2 - $s0)
+sub $s1,$t2,$s0 # "Subtract" Resta el contenido de $t2 y $s0 y lo guarda en $s1 ($s1 = $t2 - $s0)
 
-mul $s3,$s4,$s5 # Multiplica el contenido del registro $s4 y $s5 y lo guarda en $s3. 
+mul $s3,$s4,$s5 # Multiplica el contenido de $s4 y $s5 y lo guarda en $s3. 
                 # Este solo guarda los 32 bits menos signitficativos, por lo que si trabajamos con números muy grandes podría 
                 # ser un problema ($s3 = $s4 * $s5)
-mult $t6,$t7 # Multiplica el contenido del registro $t6 y $t7. El resultado se almacena en los registros especiales.
+mult $t6,$t7 # Multiplica el contenido de $t6 y $t7. El resultado se almacena en los registros especiales.
              # Los 32 bits más significativos en HI
              # Los 32 bits menos significativos en LO
 
-div $s0,$s1,$s2 # Divide el contenido del registro $s1 y $s2 y almacena la parte entera en $s0 ($s0 = $s1 / $s2)
+div $s0,$s1,$s2 # Divide el contenido de $s1 y $s2 y almacena la parte entera en $s0 ($s0 = $s1 / $s2)
 div $s1,$s2 # Divide el contenido del registro $s1 y $s2. 
             # El cociente lo coloca en LO (LO = $s1 / $s2)
             # El resto lo coloca en HI (HI = $s1 % $s2)
@@ -55,9 +55,9 @@ xori $t0,$t1,0xD # Hace el "XOR" bit a bit de $t1 y 0xD (número en hexadecimal)
 
 not $t0,$t1 # Hace el "NOT" (invierte todos los bits) de $t1 y lo almacena en $t0 ($t0 = ~ $t1)
 
-sll $t3,$t4,2 # "Shift left logical" Desplaza dos bits a la izquierda el contenido del registro $t4 y se rellena con ceros por la derecha.
+sll $t3,$t4,2 # "Shift left logical" Desplaza dos bits a la izquierda el contenido del registro $t4 y se rellena con ceros por la derecha. Ejemplo: (101100 -> 110000)
               # El resultado se guarda en $t3 ($t3 = $t4 << 2)
-srl $t3,$t4,1 # "Shift right logical" Desplaza un bit a la derecha el contenido del registro $t3 y se rellena con ceros por la izquierda.
+srl $t3,$t4,1 # "Shift right logical" Desplaza un bit a la derecha el contenido del registro $t3 y se rellena con ceros por la izquierda. Ejmplo: (101100 -> 010110)
               # El resultado de guarda en $t3 ($t3 = $t4 >> 1)
 
 
@@ -133,8 +133,8 @@ bgtz $t0,etiqueta # "Greater than zero" Si $t0 es mayor que cero salta a "etique
 
 # Con signo:
 
-slt $t0,$t1,$t2 # "Less than" Si $t1 es menor que $t2, guarda un 1 en $t0, si no un 0 (if ($t1 < $t2))
-sle $t0,$t1,$t2 # "Less or equal" Si $t1 es menor o igual que $t2, guarda un 1 en $t0, si no un 0 (if ($t1 <= $t2))
+slt $t0,$t1,$t2 # "Lower than" Si $t1 es menor que $t2, guarda un 1 en $t0, si no un 0 (if ($t1 < $t2))
+sle $t0,$t1,$t2 # "Lower or equal" Si $t1 es menor o igual que $t2, guarda un 1 en $t0, si no un 0 (if ($t1 <= $t2))
 
 seq $t0,$t1,$t2 # "Equal" Si $t1 es igual que $t2, guarda un 1 en $t0, si no un 0 (if ($t1 == $t2))
 sne $t0,$t1,$t2 # "Not equal" Si $t1 no es igual que $t2, guarda un 1 en $t0, si no un 0 (if ($t1 != $t2))
@@ -145,8 +145,8 @@ sgt $t0,$t1,$t2 # "Greater than" Si $t1 es mayor que $t2, guarda un 1 en $t0, si
 
 # Sin signo:
 
-sltu $t0,$t1,$t2 # "Less than" Si $t1 es menor que $t2, guarda un 1 en $t0, si no un 0 (if ($t1 < $t2))
-sleu $t0,$t1,$t2 # "Less or equal" Si $t1 es menor o igual que $t2, guarda un 1 en $t0, si no un 0 (if ($t1 <= $t2))
+sltu $t0,$t1,$t2 # "Lower than" Si $t1 es menor que $t2, guarda un 1 en $t0, si no un 0 (if ($t1 < $t2))
+sleu $t0,$t1,$t2 # "Lower or equal" Si $t1 es menor o igual que $t2, guarda un 1 en $t0, si no un 0 (if ($t1 <= $t2))
 
 seq $t0,$t1,$t2 # "Equal" Si $t1 es igual que $t2, guarda un 1 en $t0, si no un 0 (if ($t1 == $t2))
 sne $t0,$t1,$t2 # "Not equal" Si $t1 no es igual que $t2, guarda un 1 en $t0, si no un 0 (if ($t1 != $t2))
