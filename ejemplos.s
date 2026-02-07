@@ -20,13 +20,13 @@ if ($s0 != $s1) { # Condición
 # Código MIPS:
 
 if: # Condición
-    bne     $s0,$s1,if-then
-    b   if-fin
+    bne     $s0,$s1,if_then
+    b   if_fin
 
-if-then: # Dentro IF (then)
+if_then: # Dentro IF (then)
     move $s3,$s1
 
-if-fin: # Después IF
+if_fin: # Después IF
 
 
 
@@ -49,19 +49,19 @@ if ($s0 != $s1) { # Condición
 
 if: # Condición
 
-    bne     $s0,$s1,if-then
+    bne     $s0,$s1,if_then
     b   else
 
-if-then: # Dentro IF (then)
+if_then: # Dentro IF (then)
 
     move $s3,$s1
-    b if-fin
+    b if_fin
 
 else: # Else
 
     move    $s3,$s0
 
-if-fin: # Después IF
+if_fin: # Después IF
 
 
 
@@ -94,10 +94,10 @@ while (numero > 0) { # Condición
 
 while: #condición
 
-    bgtz    $v0,while-dentro
-    b   while-fuera
+    bgtz    $v0,while_dentro
+    b   while_fuera
 
-while-dentro: #while dentro
+while_dentro: #while dentro
 
     add $s0,$s0,$v0
 
@@ -107,7 +107,7 @@ while-dentro: #while dentro
 
     b while
 
-while-fin: # Después while
+while_fin: # Después while
 
 
 
@@ -134,16 +134,16 @@ move $t0,$zero
 
 for:
 
-    ble $t0,100,for-dentro #condición
-    b for-fin
+    ble $t0,100,for_dentro #condición
+    b for_fin
 
-for-dentro:
+for_dentro:
 
     add $s0,$s0,$t0 #suma +=i
     addi $t0,$t0,1 #i++
     b for
 
-for-fin: #después for
+for_fin: #después for
 
 
 
@@ -168,31 +168,31 @@ if:
   slt $t3,$s4,$zero # $t3 = ($s4 < 0)
 
   or $t5,$t2,$t3 # $t5 = ($t2 | $t3) -> (($s1 > $2) && ($s1 <= $s3)) || ($s4 < 0))
-  beqz $t5,if-end # Si no se cumple (si es = 0)
+  beqz $t5,if_end # Si no se cumple (si es = 0)
 
   addi $s1,$s1,1
 
-if-end:
+if_end:
 
 # También se puede comprobar primero si la primera parte (($s1 > $2) && ($s1 <= $s3)) se cumple y saltar directamente al if
 
 if:
 
-  bgt $s1,$s2,if-cumple1
-  b if-nocumple1
+  bgt $s1,$s2,if_cumple1
+  b if_nocumple1
 
-if-cumple1:
+if_cumple1:
 
-  ble $s1,$s3,if-then
+  ble $s1,$s3,if_then
 
-if-nocumple1:
+if_nocumple1:
 
-  bltz $s4,if-then
-  b if-end
+  bltz $s4,if_then
+  b if_end
 
-if-then:
+if_then:
 
   addi $s1,$s1,1
 
-if-end:
+if_end:
 

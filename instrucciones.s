@@ -166,3 +166,72 @@ xor $t0,$t1,$t2 # Hace el "XOR" bit a bit de $t1 y $t2 y lo almacena en $t0 ($t0
 not $t0,$t1,$t2 # Hace el "NOR" (invierte todos los bits) de $t1 y $t2 y lo almacena en $t0 ($t0 = ~($t1 | $t2))
 
 not $t0,$t1 # Hace el "NOT" (invierte todos los bits) de $t1 y lo almacena en $t0 ($t0 = ~ $t1)
+
+
+
+
+# Llamadas al sistema:
+# Video explicativo 1: https://tuvideo.txs.es/w/hQGPAdpRCu8F9sT957kZWY
+# Video explicativo 2: https://tuvideo.txs.es/w/wM7oH8sZodJgS1rHaUu8uM
+
+
+
+# Se le dan valores a $v0 para saber que operación queremos hacer:
+
+
+
+# Imprimir, tenemos que poner el valor que queramos imprimir en cierto registro específico para que funcione:
+
+li $v0,1 # "Print Int" Le indica al sistema que vamos a imprimir un entero que SIEMPRE se encuentra en $a0.
+li $a0,10
+syscall
+
+li $v0,2 # "Print float" Le indica al sistema que vamos a imprimir un entero que SIEMPRE se encuentra en $f12.
+li $f12,12.4
+syscall
+
+li $v0,3 # "Print double" Le indica al sistema que vamos a imprimir un entero que SIEMPRE se encuentra en $f12 y $f13.
+li $f12,1213
+li $f13,0134
+syscall
+
+li $v0,4 # "Print string" Le indica al sistema que vamos a imprimir una cadena de caracteres cuya dirección de memoria SIEMPRE se encuentra en $a0.
+la $a0,cadena
+syscall
+
+li $v0,11 # "Print char" Le indica al sistema que vamos a imprimir un caracter que SIEMPRE se encuentra en $a0.
+li $a0,'a' 
+syscall
+
+
+# Leer, los resultados de la lectura se guardan en unos registros específicos:
+
+li $v0,5 # "Read int" Le indica al sistema que vamos a leer un entero por teclado, dicho entero se guardará en $v0
+syscall
+move $t0,$v0
+
+li $v0,6 # "Read float" Le indica al sistema que vamos a leer un flotante por teclado, dicho flotante se guardará en $f0
+syscall
+move $t0,$f0
+
+li $v0,7 # "Read double" Le indica al sistema que vamos a leer un double por teclado, dicho double se guardará en $f0 y $f1
+syscall
+move $t0,$f0
+move $t1,$f1
+
+li $v0,8
+syscall
+# "Read string" Le indica al sistema que vamos a leer una cadena de caracteres.
+# En $a0 se encontrará la dirección de memoria de la cadena (buffer)
+# En $a1 se encontrará el número máximo de caracteres admisibles (tamaño del buffer)
+
+li $v0,12 # "Read char" Le indica al sistema que vamos a leer un caracter, dicho caracter se guardará en $v0
+syscall
+move $t0,$v0
+
+
+
+# Finalización del programa:
+
+li $v0,10 # "Exit" Le indica al sistema que nuestro programa ya terminó.
+syscall
