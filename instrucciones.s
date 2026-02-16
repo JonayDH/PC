@@ -230,8 +230,117 @@ syscall
 move $t0,$v0
 
 
-
 # Finalización del programa:
 
 li $v0,10 # "Exit" Le indica al sistema que nuestro programa ya terminó.
 syscall
+
+
+
+
+# Operaciones con flotantes:
+
+
+# Simple precisión:
+
+add.s $f2,$f4,$f6 # Suma ($f2 = $f4 + $f6)
+
+sub.s $f2,$f4,$f6 # Resta ($f2 = $f4 - $f6)
+
+mul.s $f2,$f4,$f6 # Multiplicación ($f2 = $f4 * $f6)
+
+div.s $f2,$f4,$f6 # División ($f2 = $f4 / $f6)
+
+abs.s $f2,$f4 # Valor absoluto ($f2 = |$f4|)
+
+neg.s $f2,$f4 # Cambio de signo ($f2 = -$f4)
+
+
+# Doble precisión:
+
+add.d $f2,$f4,$f6 # Suma ($f2 = $f4 + $f6)
+
+sub.d $f2,$f4,$f6 # Resta ($f2 = $f4 - $f6)
+
+mul.d $f2,$f4,$f6 # Multiplicación ($f2 = $f4 * $f6)
+
+div.d $f2,$f4,$f6 # División ($f2 = $f4 / $f6)
+
+abs.d $f2,$f4 # Valor absoluto ($f2 = |$f4|)
+
+neg.d $f2,$f4 # Cambio de signo ($f2 = -$f4)
+
+
+# Carga y descarga:
+
+lwc1 $f0,etiqueta
+l.s $f0,etiqueta # carga en $f0 el valor de etiqueta. Simple precisión ($f0 = etiqueta)
+
+swc1 $f0,etiqueta
+s.s $f0,etiqueta # guarda en etiqueta el valor de $f0. Simple precisión (etiqueta = $f0)
+
+ldc1 $f0,etiqueta
+l.d $f0,etiqueta # carga en $f0 (y $f1) el valor de etiqueta. Doble precisión ($f0 = etiqueta)
+
+sdc1 $f0,etiqueta
+s.d $f0,etiqueta # guarda en etiqueta el valor de $f1 (y $f1). Doble precisión (etiqueta = $f0)
+
+li.s $f0,3.14 # "Load inmidiate" carga 3.14 en el registro $f0. Simple precisión ($f0 = 3.14)
+
+li.d $f0,3.14 # "Load inmidiate" carga 3.14 en el registro $f0 (y $f1). Doble precisión ($f0 = 3.14)
+
+mov.s $f4,$f6 # Mueve el contenido de $f6 y lo pone en $f4. Simple precisión ($f4 = $f6)
+
+mov.d $f4,$f6 # Mueve el contenido de $f6 (y $f7) y lo pone en $f4 (y $f5). Doble precisión ($f4 = $f6)
+
+
+# Conversiones:
+
+mtc1 $t0,$f0 # Copia de manera "cruda" (bit a bit) el contenido de $t0 en $f0 ($f0 = $t0) CUIDADO PORQUE SE ESCRIBE AL REVÉS
+
+mfc1 $f0,$t0 # Copia de manera "cruda" (bit a bit) el contenido de $f0 en $t0 ($t0 = $f0) CUIDADO PORQUE SE ESCRIBE AL REVÉS
+
+cvt.s.w $f2,$f0 # Pasa el contenido de $f0 (copia de un entero) al registro $f2 (simple precisión) ($f2 = $f0)
+
+cvt.s.d $f2,$f0 # Pasa el contenido de $f0 (doble precisión) al registro $f2 (simple precisión) ($f2 = $f0)
+
+cvt.d.w $f2,$f0 # Pasa el contenido de $f0 (copia de un entero) al registro $f2 (doble precisión) ($f2 = $f0)
+
+cvt.d.s $f2,$f0 # Pasa el contenido de $f0 (simple precisión) al registro $f2 (doble precisión) ($f2 = $f0)
+
+# Formato:
+
+cvt -> convert
+s -> simple
+d -> double
+w -> copia de un entero
+
+# Ejemplo:
+cvt.s.d $f0,$f1 # convierte el doble $f1 en un simple y lo guarda en $f0
+
+
+# Comparaciones:
+
+c.eq.s $f2,$f4 # Si $f2 es igual a $f4 pone cond a 1 (Simple precisión)
+c.lt.s $f2,$f4 # Si $f2 es menor que $f4 pone cond a 1 (Simple precisión)
+c.le.s $f2,$f4 # Si $f2 es menor o igual que $f4 pone cond a 1 (Simple precisión)
+
+c.eq.d $f2,$f4 # Si $f2 es igual a $f4 pone cond a 1 (Doble precisión)
+c.lt.d $f2,$f4 # Si $f2 es menor que $f4 pone cond a 1 (Doble precisión)
+c.le.d $f2,$f4 # Si $f2 es menor o igual que $f4 pone cond a 1 (Doble precisión)
+
+# Formato:
+
+c -> cond
+eq -> equal
+lt -> lower than
+le -> lower or equal than
+s -> simple
+d -> double
+
+# Ejemplo:
+c.eq.s $f2,$f4 # Si $f2 es igual a $f4 pone cond a 1 (Simple precisión)
+
+bc1t etiqueta # Si cond es igual a 1 salta a etiqueta ("Branch cond 1 true")
+bc1f etiqueta # Si cond es igual a 0 salta a etiqueta ("Branch cond 1 false")
+
