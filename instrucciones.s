@@ -273,17 +273,13 @@ neg.d $f2,$f4 # Cambio de signo ($f2 = -$f4)
 
 # Carga y descarga:
 
-lwc1 $f0,etiqueta
 l.s $f0,etiqueta # carga en $f0 el valor de etiqueta. Simple precisión ($f0 = etiqueta)
 
-swc1 $f0,etiqueta
 s.s $f0,etiqueta # guarda en etiqueta el valor de $f0. Simple precisión (etiqueta = $f0)
 
-ldc1 $f0,etiqueta
 l.d $f0,etiqueta # carga en $f0 (y $f1) el valor de etiqueta. Doble precisión ($f0 = etiqueta)
 
-sdc1 $f0,etiqueta
-s.d $f0,etiqueta # guarda en etiqueta el valor de $f1 (y $f1). Doble precisión (etiqueta = $f0)
+s.d $f0,etiqueta # guarda en etiqueta el valor de $f0 (y $f1). Doble precisión (etiqueta = $f0)
 
 li.s $f0,3.14 # "Load inmidiate" carga 3.14 en el registro $f0. Simple precisión ($f0 = 3.14)
 
@@ -296,9 +292,9 @@ mov.d $f4,$f6 # Mueve el contenido de $f6 (y $f7) y lo pone en $f4 (y $f5). Dobl
 
 # Conversiones:
 
-mtc1 $t0,$f0 # Copia de manera "cruda" (bit a bit) el contenido de $t0 en $f0 ($f0 = $t0) CUIDADO PORQUE SE ESCRIBE AL REVÉS
+mtc1 $t0,$f0 # "Move to coprocesador 1" Copia de manera "cruda" (bit a bit) el contenido de $t0 en $f0 ($f0 = $t0) CUIDADO PORQUE SE ESCRIBE AL REVÉS
 
-mfc1 $f0,$t0 # Copia de manera "cruda" (bit a bit) el contenido de $f0 en $t0 ($t0 = $f0) CUIDADO PORQUE SE ESCRIBE AL REVÉS
+mfc1 $t0,$f0 # "Move from coprocesador 1" Copia de manera "cruda" (bit a bit) el contenido de $f0 en $t0 ($t0 = $f0)
 
 cvt.s.w $f2,$f0 # Pasa el contenido de $f0 (copia de un entero) al registro $f2 (simple precisión) ($f2 = $f0)
 
@@ -310,7 +306,7 @@ cvt.d.s $f2,$f0 # Pasa el contenido de $f0 (simple precisión) al registro $f2 (
 
 # Formato:
 
-cvt -> convert
+cvt -> convert -> c/on/v/er/t
 s -> simple
 d -> double
 w -> copia de un entero
