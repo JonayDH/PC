@@ -256,10 +256,12 @@ main:
 #    }
 #    std::cout << '\n';
 #   }
-
 	if_fin:
 	
-
+	li $v0,11
+	li $a0,10
+	syscall
+	
 	addi $s2,$s2,1
 
 	b for_condicion
