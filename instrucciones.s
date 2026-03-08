@@ -187,12 +187,11 @@ li $a0,10
 syscall
 
 li $v0,2 # "Print float" Le indica al sistema que vamos a imprimir un entero que SIEMPRE se encuentra en $f12.
-li $f12,12.4
+li.s $f12,12.4
 syscall
 
 li $v0,3 # "Print double" Le indica al sistema que vamos a imprimir un entero que SIEMPRE se encuentra en $f12 y $f13.
-li $f12,1213
-li $f13,0134
+li.d $f12,1213
 syscall
 
 li $v0,4 # "Print string" Le indica al sistema que vamos a imprimir una cadena de caracteres cuya dirección de memoria SIEMPRE se encuentra en $a0.
@@ -212,12 +211,11 @@ move $t0,$v0
 
 li $v0,6 # "Read float" Le indica al sistema que vamos a leer un flotante por teclado, dicho flotante se guardará en $f0
 syscall
-move $t0,$f0
+mov.s $f20,$f0
 
 li $v0,7 # "Read double" Le indica al sistema que vamos a leer un double por teclado, dicho double se guardará en $f0 y $f1
 syscall
-move $t0,$f0
-move $t1,$f1
+mov.d $f20,$f0
 
 li $v0,8
 syscall
