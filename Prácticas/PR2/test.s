@@ -72,6 +72,7 @@ strTermina:	.asciiz	"\n\nTermina el programa\n"
 main:
 
 # Tabla de registros:
+#
 # a -> $f20
 # b -> $f22
 # c -> $f24
@@ -82,7 +83,6 @@ main:
 # f -> $f28
 
 #   float a,b,c,d;
-
 #   std::cout << "\nEvaluacion polinomio f(x) = a x^3 + b x^2 + c x + d"
 #             << " en un intervalo [r,s]\n";
 	li $v0,4
@@ -97,7 +97,7 @@ main:
 #   std::cin >> a;
 	li $v0,6
 	syscall
-	mov.s $f20,$f0
+	mov.s $f20, $f0
 
 #   std::cout << "Introduzca coeficiente b: ";
 	li $v0,4
@@ -107,7 +107,7 @@ main:
 #   std::cin >> b;
 	li $v0,6
 	syscall
-	mov.s $f22,$f0
+	mov.s $f22, $f0
 
 #   std::cout << "Introduzca coeficiente c: ";
 	li $v0,4
@@ -117,7 +117,7 @@ main:
 #   std::cin >> c;
 	li $v0,6
 	syscall
-	mov.s $f24,$f0
+	mov.s $f24, $f0
 
 #   std::cout << "Introduzca coeficiente d: ";
 	li $v0,4
@@ -127,12 +127,12 @@ main:
 #   std::cin >> d;
 	li $v0,6
 	syscall
-	mov.s $f26,$f0
+	mov.s $f26, $f0
 
 #   int r,s;
 #   do {
-
 	do:
+
 #     std::cout << "\nLímite inferior r: ";
 		li $v0,4
 		la $a0,strIntroR
@@ -152,10 +152,9 @@ main:
 		li $v0,5
 		syscall
 		move $s1,$v0
-
+		
 #   } while (r > s);
-	while_condicion:
-
+	while_do:
 		bgt $s0,$s1,do
 
 #   for (int x = r ; x <= s ; x++) {
@@ -167,88 +166,95 @@ main:
 		ble $s2,$s1,for_dentro
 		b for_fin
 
-#     float f = d;
 	for_dentro:
 
+#     // float f = x*x*x*a + x*x*b + x*c + d;
+#     float f = d;
 		mov.s $f28,$f26
 
 #     f += x*c;
-		mtc1 $s2,$f4
-		cvt.s.w $f4,$f4
-		mul.s $f4,$f4,$f24
-		add.s $f28,$f28,$f4
+		mtc1 $s2,$f10
+		cvt.s.w $f10,$f10
+
+		mul.s $f10,$f10,$f24
+		add.s $f28,$f28,$f10
 
 #     f += x*x*b;
-		mtc1 $s2,$f4
-		cvt.s.w $f4,$f4
-		mul.s $f4,$f4,$f4
-		mul.s $f4,$f4,$f22
-		add.s $f28,$f28,$f4
-		
+		mtc1 $s2,$f10
+		cvt.s.w $f10,$f10
+
+		mul.s $f10,$f10,$f10
+		mul.s $f10,$f10,$f22
+		add.s $f28,$f28,$f10
+
 #     f += x*x*x*a;
-		mtc1 $s2,$f4
-		cvt.s.w $f4,$f4
-		mul.s $f6,$f4,$f4
-		mul.s $f4,$f4,$f6
-		mul.s $f4,$f4,$f20
-		add.s $f28,$f28,$f4
+		mtc1 $s2,$f10
+		cvt.s.w $f10,$f10
+		
+		mul.s $f8,$f10,$f10
+		mul.s $f8,$f8,$f10
+		mul.s $f8,$f8,$f20
+		add.s $f28,$f28,$f8
 
 #    if (f >= 2.5) {
-	if_condicion:
-
-		li.s $f8,2.5
-		c.lt.s $f28,$f8
-		bc1f if_dentro
-		b if_else
 	
+		if_condicion:
+
+			li.s $f10,2.5
+			c.lt.s $f28,$f10
+			bc1f if_dentro
+			b if_else
+
+		if_dentro:
+		
 #      std::cout << "f(" << x << ") = " << f;
-	if_dentro:
+			li $v0,4
+			la $a0,strF
+			syscall
 
-		li $v0,4
-		la $a0,strF
-		syscall
+			li $v0,1
+			move $a0,$s2
+			syscall
 
-		li $v0,1
-		move $a0,$s2
-		syscall
+			li $v0,4
+			la $a0,strIgual
+			syscall
 
-		li $v0,4
-		la $a0,strIgual
-		syscall
+			li $v0,2
+			mov.s $f12,$f28
+			syscall
 
-		li $v0,2
-		mov.s $f12,$f28
-		syscall
-
-		b if_fin
-
+			b if_fin
 #    } else {
-	if_else:
+		if_else:
+
 #      std::cout << x << " no supera";
-		li $v0,1
-		move $a0,$s2
-		syscall
+			li $v0,1
+			move $a0,$s2
+			syscall
 
-		li $v0,4
-		la $a0,strNoSupera
-		syscall
+			li $v0,4
+			la $a0,strNoSupera
+			syscall
 #    }
-	if_fin:
 
+	if_fin:
 #    std::cout << '\n';
-	li $v0,11
-	li $a0,10
-	syscall
 #   }
-	addi $s2,$s2,1
-	b for_condicion
+		li $v0,11
+		li $a0,10
+		syscall
+
+		addi $s2,1
+		b for_condicion
 
 	for_fin:
 
 #   std::cout << "\n\nTermina el programa\n";
+# }
 	li $v0,4
 	la $a0,strTermina
 	syscall
-# }
+
 	li $v0,10
 	syscall
