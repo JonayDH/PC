@@ -44,13 +44,15 @@
 
 main:
 
-# int s1 = objeto1.elementos;
-# float f21 = objeto1.largo;
-# double f22 = objeto1.peso;
 	la $t0,objeto1
 
+# int s1 = objeto1.elementos;
 	lw $s1,12($t0)
+
+# float f21 = objeto1.largo;
 	l.s $f21,0($t0)
+
+# double f22 = objeto1.peso;
 	l.d $f22,4($t0)
 
 # int s2 = objeto2.elementos;

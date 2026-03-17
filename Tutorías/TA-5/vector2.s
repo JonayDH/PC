@@ -5,13 +5,16 @@
 
 # int s6 = 0;
 # int s1 = vec[s6];
+# vec[s5] = 0;
+
+# dirección base + i * tamaño dato
 
 .data
 
 	vector:
 		.word 3, 9, 5, 7
 
-# Constante el tiempo de compilado
+# Constante el tiempo de compilado (tamaño de los datos)
 tamW = 4
 
 .text
@@ -36,6 +39,12 @@ main:
 	add $t2,$t1,$t0 # Se lo sumamos al inicio del vector
 	lw $s1,0($t2) # Cargamos el resultado en $s1
 
+# vec[s5] = 0;
+	mul $t1,$s5,tamW # Calculamos el desplazamiento
+	add $t2,$t1,$t0 # Se lo sumamos al inicio del vector
+	sw $zero,0($t2) # Guardamos un 0 en vec[3]
+
+# Acabamos el programa
 	li $v0,10
 	syscall
 
