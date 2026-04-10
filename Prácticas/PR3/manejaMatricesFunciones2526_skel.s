@@ -351,19 +351,321 @@ cadFin:         .asciiz "\n\nTermina el programa\n"
 
 	.text
 
-print_mat:
+
+
+
 # void print_mat(structMat* mat) {
+print_mat:
+# Parámetros de entrada:
+# mat -> $a0
+# Parámetros de salida: ninguno
+
+# Tabla de registros:
+# nFil -> $s0
+# nCol -> $s1
+# datos -> $s2
+# f -> $s3
+# c -> $s4
+
+# Esta función usa la pila
+
+# Push: $ra, $s0, $s1, $s2, $s3, $s4
+	addi $sp,-24
+	sw $ra,0($sp)
+	sw $s0,4($sp)
+	sw $s1,8($sp)
+	sw $s2,12($sp)
+	sw $s3,16($sp)
+	sw $s4,20($sp)
+
 #   int nFil = mat->nFil;
+	lw $s0,nFil($a0)
+
 #   int nCol = mat->nCol;
+	lw $s1,nCol($a0)
+
 #   double* datos = mat->elementos;
+	la $s2,elementos($a0)
+
 #   std::cout << "\n\nLa matriz tiene dimension " << nFil
+	li $v0,4
+	la $a0,cadDim
+	syscall
+
+	li $v0,1
+	move $a0,$s0
+	syscall
+
 #       << 'x' << nCol << '\n';
+	li $v0,11
+	li $a0,'x'
+	syscall
+
+	li $v0,1
+	move $a0,$s1
+	syscall
+
+	li $v0,11
+	li $a0,'\n'
+	syscall
+
 #   for(int f = 0; f < nFil; f++) {
+	li $s3,0
+	print_mat_for_condicion:
+
+		blt $s3,$s0,print_mat_for_dentro
+		b print_mat_for_fuera
+
+	print_mat_for_dentro:
 #     for(int c = 0; c < nCol; c++) {
+		li $s4,0
+		print_mat_for2_condicion:
+
+			blt $s4,$s1,print_mat_for2_dentro
+			b print_mat_for2_fuera
+
+		print_mat_for2_dentro:
+
 #       std::cout << datos[f*nCol + c] << ' ';  // datos[f][c]
+			mul $t1,$s3,$s1
+			add $t1,$t1,$s4
+			mul $t1,$t1,tamD
+			add $t1,$t1,$s2
+
+			li $v0,3
+			l.d $f12,0($t1)
+			syscall
+
+			li $v0,11
+			li $a0,' '
+			syscall
+
+			addi $s4,1
+			b print_mat_for2_condicion
 #     }
+		print_mat_for2_fuera:
 #     std::cout << '\n';
+		li $v0,11
+		li $a0,'\n'
+		syscall
+
+		addi $s3,1
+		b print_mat_for_condicion
 #   }
+	print_mat_for_fuera:
 #   std::cout << '\n';
+	li $v0,11
+	li $a0,'\n'
+	syscall
 # }
+
+# Pop:
+	lw $ra,0($sp)
+	lw $s0,4($sp)
+	lw $s1,8($sp)
+	lw $s2,12($sp)
+	lw $s3,16($sp)
+	lw $s4,20($sp)
+	addi $sp,24
+
+	jr $ra
+
 print_mat__MARCAFIN:
+
+
+
+# void change_elto(structMat* mat, int indF, int indC, double valor) {
+change_elto:
+# Parámetros de entrada:
+# mat -> $a0
+# indF -> $a1
+# indC -> $a2
+# valor -> $f12
+# Parámetros de salida: ninguno
+
+# Tabla de registros:
+# numCol -> $t0
+# datos -> $t1
+
+#   int numCol = mat->nCol;
+	lw $t0,nCol($a0)
+
+#   double* datos = mat->elementos;
+	la $t1,elementos($a0)
+
+#   datos[indF * numCol + indC] = valor;  // datos[indF][indC]
+	mul $t2,$t0,$a1
+	add $t2,$t2,$a2
+	mul $t2,$t2,tamD
+	add $t2,$t2,$t1
+	s.d $f12,0($t2)
+
+# }
+	jr $ra
+
+change_elto__MARCAFIN:
+
+
+
+# void swap(double* e1, double* e2) {
+swap:
+# Parámetros de entrada:
+# e1 -> $a0
+# e2 -> $a1
+# Parámetros de salida: ninguno
+
+# Tabla de registros:
+# temp1 -> $f4
+# temp2 -> $f6
+
+#   double temp1 = *e1;
+	l.d $f4,0($a0)
+
+#   double temp2 = *e2;
+	l.d $f6,0($a1)
+
+#   *e1 = temp2;
+	s.d $f6,0($a0)
+
+#   *e2 = temp1;
+	s.d $f4,0($a1)
+
+# }
+	jr $ra
+
+swap__MARCAFIN:
+
+
+# int leeFila(int numFilas) {
+leeFila:
+# Parámetros de entrada:
+# numFilas -> $a0 -> $s0
+# Parámetros de salida:
+# indFil -> $v0
+
+# Tabla de registros:
+# indFil -> $s1
+
+# Esta función necesita usar la pila
+
+# push: $ra, $s0, $s1
+	addi $sp,-12
+	sw $ra,0($sp)
+	sw $s0,4($sp)
+	sw $s1,8($sp)
+
+	move $s0,$a0
+#   int indFil;
+#   std::cin >> indFil;
+	li $v0,5
+	syscall
+	move $s1,$v0
+
+#   if ((indFil < 0) || (indFil >= numFilas)) {
+	leeFila_if_condicion:
+
+		blt $s1,$zero,leeFila_if_dentro
+		bge $s1,$s0,leeFila_if_dentro
+		b leeFila_if_fuera
+
+	leeFila_if_dentro:
+
+#     std::cout << "Error: Numero de fila incorrecto\n";
+		li $v0,4
+		la $a0,cadErrorFila
+		syscall
+
+#     return -1;
+		li $v0,-1
+
+# pop:
+		lw $ra,0($sp)
+		lw $s0,4($sp)
+		lw $s1,8($sp)
+		addi $sp,12
+
+		jr $ra
+#   }
+	leeFila_if_fuera:
+
+#   return indFil;
+	move $v0,$s1
+
+# }
+# pop:
+	lw $ra,0($sp)
+	lw $s0,4($sp)
+	lw $s1,8($sp)
+	addi $sp,12
+
+	jr $ra
+
+leeFila__MARCAFIN:
+
+
+
+# int leeColumna(int numColumnas) {
+leeColumna:
+# Parámetros de entrada:
+# numColumnas -> $a0 -> $s0
+# Parámetros de salida:
+# indCol -> $v0
+
+# Tabla de registros:
+# indCol -> $s1
+
+# Esta función necesita usar la pila:
+# push: $ra, $s0, $s1
+	addi $sp,-12
+	sw $ra,0($sp)
+	sw $s0,4($sp)
+	sw $s1,8($sp)
+
+	move $s0,$a0
+#   int indCol;
+#   std::cin >> indCol;
+	li $v0,5
+	syscall
+	move $s1,$v0
+
+#   if ((indCol < 0) || (indCol >= numColumnas)){
+	leeColumna_if_condicion:
+
+		blt $s1,$zero,leeColumna_if_dentro
+		bge $s1,$s0,leeColumna_if_dentro
+		b leeColumna_if_fuera
+
+	leeColumna_if_dentro:
+
+#     std::cout << "Error: Numero de columna incorrecto\n";
+		li $v0,4
+		la $a0,cadErrorCol
+		syscall
+
+#     return -1;
+		li $v0,-1
+
+# pop:
+		lw $ra,0($sp)
+		lw $s0,4($sp)
+		lw $s1,8($sp)
+		addi $sp,12
+
+		jr $ra
+
+#   }
+	leeColumna_if_fuera:
+
+#   return indCol;
+	move $v0,$s1
+# }
+
+# pop:
+	lw $ra,0($sp)
+	lw $s0,4($sp)
+	lw $s1,8($sp)
+	addi $sp,12
+
+	jr $ra
+
+leeColumna__MARCAFIN:
