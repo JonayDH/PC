@@ -351,7 +351,7 @@ cadFin:         .asciiz "\n\nTermina el programa\n"
 
 	.text
 
-	
+
 
 # void print_mat(structMat* mat) {
 print_mat:
@@ -1108,7 +1108,7 @@ main:
 # Tabla de registros:
 # matTrabajo -> $s0
 # opcion -> $s1
-# matT -> $s2
+# matT -> $t0
 # indFil -> $s3
 # indCol -> $s4
 # valor -> $f20
@@ -1189,13 +1189,13 @@ main:
 #         std::cin >> matT;
 			li $v0,5
 			syscall
-			move $s2,$v0
+			move $t0,$v0
 
 #         if ((matT < 0) || (matT >= NUM_MATRICES)) {
 			if_switch_case1_condicion:
 
-				blt $s2,0,if_switch_case1_dentro
-				bge $s2,NUM_MATRICES,if_switch_case1_dentro
+				blt $t0,0,if_switch_case1_dentro
+				bge $t0,NUM_MATRICES,if_switch_case1_dentro
 				b if_switch_case1_fuera
 
 			if_switch_case1_dentro:
@@ -1211,10 +1211,10 @@ main:
 			if_switch_case1_fuera:
 
 #         matTrabajo = matrices[matT];
-			la $t0,matrices
-			mul $t1,$s2,tamP
-			add $t0,$t0,$t1
-			lw $s0,0($t0)
+			la $t1,matrices
+			mul $t2,$t0,tamP
+			add $t2,$t2,$t1
+			lw $s0,0($t2)
 
 #         break; // salimos del switch
 			b switch_break
