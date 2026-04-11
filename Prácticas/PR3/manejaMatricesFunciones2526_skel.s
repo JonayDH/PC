@@ -353,6 +353,113 @@ cadFin:         .asciiz "\n\nTermina el programa\n"
 
 
 
+# std::tuple<int, int> pideFilaYColumna(structMat* mat) {
+pideFilaYColumna:
+# Parámetros de entrada:
+# mat -> $a0 -> $s0
+# Parámetros de salida:
+# indFil -> $v0
+# indCol -> $v1
+
+# Tabla de registros:
+# indFil -> $s1
+# indCol -> $s2
+
+# Esta función necesita usar la pila:
+# push: $ra, $s0, $s1, $s2
+	addi $sp,-16
+	sw $ra,0($sp)
+	sw $s0,4($sp)
+	sw $s1,8($sp)
+	sw $s2,12($sp)
+
+	move $s0,$a0
+
+#   std::cout << "\nIndice de fila: ";
+	li $v0,4
+	la $a0,pideFila
+	syscall
+
+#   int indFil = leeFila(mat->nFil);
+	lw $a0,nFil($s0)
+	jal leeFila
+	move $s1,$v0
+
+#   if (indFil < 0) {
+	pideFilaYColumna_if_condicion:
+
+		blt $s1,$zero,pideFilaYColumna_if_dentro
+		b pideFilaYColumna_if_fuera
+
+	pideFilaYColumna_if_dentro:
+
+#     return {-1, -1};
+		li $v0,-1
+		li $v1,-1
+
+# pop: $ra, $s0, $s1, $s2
+		lw $ra,0($sp)
+		lw $s0,4($sp)
+		lw $s1,8($sp)
+		lw $s2,12($sp)
+		addi $sp,16
+
+		jr $ra
+#   }
+	pideFilaYColumna_if_fuera:
+
+#   std::cout << "Indice de columna: ";
+	li $v0,4
+	la $a0,pideCol
+	syscall
+
+#   int indCol = leeColumna(mat->nCol);
+	lw $a0,nCol($s0)
+	jal leeColumna
+	move $s2,$v0
+
+#   if (indCol < 0) {
+	pideFilaYColumna_if2_condicion:
+
+		blt $s2,$zero,pideFilaYColumna_if2_dentro
+		b pideFilaYColumna_if2_fuera
+
+	pideFilaYColumna_if2_dentro:
+
+#     return {-1, -1};
+		li $v0,-1
+		li $v1,-1
+
+# pop: $ra, $s0, $s1, $s2
+		lw $ra,0($sp)
+		lw $s0,4($sp)
+		lw $s1,8($sp)
+		lw $s2,12($sp)
+		addi $sp,16
+
+		jr $ra
+
+#   }
+	pideFilaYColumna_if2_fuera:
+
+#   return {indFil, indCol};
+	move $v0,$s1
+	move $v1,$s2
+# }
+
+# pop: $ra, $s0, $s1, $s2
+	lw $ra,0($sp)
+	lw $s0,4($sp)
+	lw $s1,8($sp)
+	lw $s2,12($sp)
+	addi $sp,16
+
+	jr $ra
+
+pideFilaYColumna__MARCAFIN:
+
+
+
 # double find_max(structMat* mat) {
 find_max:
 # Parámetros de entrada:
