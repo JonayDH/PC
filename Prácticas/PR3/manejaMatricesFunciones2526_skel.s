@@ -536,6 +536,76 @@ swap:
 swap__MARCAFIN:
 
 
+
+# void intercambia(structMat* mat, int indF, int indC) {
+intercambia:
+# Parámetros de entrada:
+# mat -> $a0
+# indF -> $a1
+# indC -> $a2
+# Parámetros de salida: ninguno
+
+# Tabla de registros:
+# numCol -> $t0
+# numFil -> $t1
+# datos -> $t2
+# e1 -> $t3
+# indFilaOpuesta -> $t4
+# indColOpuesta -> $t5
+# e2 -> $t6
+
+# Esta función necesita usar la pila:
+# push: $ra
+	addi $sp,-4
+	sw $ra,0($sp)
+
+#   int numCol = mat->nCol;
+	lw $t0,nCol($a0)
+
+#   int numFil = mat->nFil;
+	lw $t1,nFil($a0)
+
+#   double* datos = mat->elementos;
+	la $t2,elementos($a0)
+
+#   // e1 = &(datos[indF][indC]);
+#   double* e1 = datos + (indF * numCol + indC);
+	mul $t3,$a1,$t0
+	add $t3,$t3,$a2
+	mul $t3,$t3,tamD
+	add $t3,$t3,$t2
+
+#   int indFilaOpuesta = (numFil - indF - 1);
+	sub $t4,$t1,$a1
+	addi $t4,-1
+
+#   int indColOpuesta = (numCol - indC - 1);
+	sub $t5,$t0,$a2
+	addi $t5,-1
+
+#   // e1 = &(datos[indFilaOpuesta][indColOpuesta])
+#   double* e2 = datos + (indFilaOpuesta * numCol + indColOpuesta);
+	mul $t6,$t4,$t0
+	add $t6,$t6,$t5
+	mul $t6,$t6,tamD
+	add $t6,$t6,$t2
+
+#   swap(e1, e2);
+	move $a0,$t3
+	move $a1,$t6
+	jal swap
+# }
+
+# pop:
+	lw $ra,0($sp)
+	addi $sp,4
+
+	jr $ra
+
+intercambia__MARCAFIN:
+
+
+
 # int leeFila(int numFilas) {
 leeFila:
 # Parámetros de entrada:
