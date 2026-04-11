@@ -352,6 +352,129 @@ cadFin:         .asciiz "\n\nTermina el programa\n"
 	.text
 
 
+
+# double find_max(structMat* mat) {
+find_max:
+# Parámetros de entrada:
+# mat -> $a0
+# Parámetros de salida:
+# max -> $f0
+
+# Tabla de registros:
+# numCol -> $s0
+# numFil -> $s1
+# datos -> $s2
+# max -> $f20
+# f -> $s3
+# c -> $s4
+# valor -> $f22
+
+# Esta función necesita usar la pila:
+# Push: $ra, $s0, $s1, $s2, $s3, $s4, $f20, $f22
+	addi $sp,-40
+	sw $ra,0($sp)
+	sw $s0,4($sp)
+	sw $s1,8($sp)
+	sw $s2,12($sp)
+	sw $s3,16($sp)
+	sw $s4,20($sp)
+	s.d $f20,24($sp)
+	s.d $f22,32($sp)
+
+#   int numCol = mat->nCol;
+	lw $s0,nCol($a0)
+
+#   int numFil = mat->nFil;
+	lw $s1,nFil($a0)
+
+#   double* datos = mat->elementos;
+	la $s2,elementos($a0)
+
+#   double max = datos[0];
+	l.d $f20,0($s2)
+
+#   for(int f = 0; f < numFil; f++) {
+	li $s3,0
+	find_max_for_condicion:
+
+		blt $s3,$s1,find_max_for_dentro
+		b find_max_for_fuera
+
+	find_max_for_dentro:
+
+#     for(int c = 0; c < numCol; c++) {
+		li $s4,0
+		find_max_for2_condicion:
+
+			blt $s4,$s0,find_max_for2_dentro
+			b find_max_for2_fuera
+
+		find_max_for2_dentro:
+
+#       double valor = datos[f * numCol + c];  // datos[f][c]
+			li $t0,0
+
+			mul $t0,$s3,$s0
+			add $t0,$t0,$s4
+			mul $t0,$t0,tamD
+			add $t0,$t0,$s2
+
+			l.d $f22,0($t0)
+
+#       if (valor > max) {
+			find_max_if_condicion:
+
+				c.le.d $f22,$f20
+				bc1f find_max_if_dentro
+				b find_max_if_fuera
+
+			find_max_if_dentro:
+
+#         max = valor;
+				mov.d $f20,$f22
+
+#         std::cout << "\nNuevo maximo " << max;
+				li $v0,4
+				la $a0,cadNuevoMax
+				syscall
+
+				li $v0,3
+				mov.d $f12,$f20
+				syscall
+#       }
+			find_max_if_fuera:
+
+			addi $s4,1
+			b find_max_for2_condicion
+#     }
+		find_max_for2_fuera:
+
+		addi $s3,1
+		b find_max_for_condicion
+
+	find_max_for_fuera:
+#   }
+#   return max;
+	mov.d $f0,$f20	
+# }
+
+# Pop: $ra, $s0, $s1, $s2, $s3, $s4, $f20, $f22
+	lw $ra,0($sp)
+	lw $s0,4($sp)
+	lw $s1,8($sp)
+	lw $s2,12($sp)
+	lw $s3,16($sp)
+	lw $s4,20($sp)
+	l.d $f20,24($sp)
+	l.d $f22,32($sp)
+	addi $sp,40
+
+	jr $ra
+
+find_max__MARCAFIN:
+
+
+
 # void procesa_cols(structMat* mat, int indC1, int indC2) {
 procesa_cols:
 # Parámetros de entrada:
