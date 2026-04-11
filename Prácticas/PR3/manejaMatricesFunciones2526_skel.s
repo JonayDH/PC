@@ -1309,8 +1309,8 @@ main:
 
 #         int indC1;
 #         indC1 = leeColumna(matTrabajo->nCol);
-			lw $t0,nCol($s0)
-			move $a0,$t0
+			lw $t1,nCol($s0)
+			move $a0,$t1
 			jal leeColumna
 
 			move $s5,$v0
@@ -1336,8 +1336,8 @@ main:
 
 #         int indC2;
 #         indC2 = leeColumna(matTrabajo->nCol);
-			lw $t0,nCol($s0)
-			move $a0,$t0
+			lw $t1,nCol($s0)
+			move $a0,$t1
 			jal leeColumna
 
 			move $s6,$v0
