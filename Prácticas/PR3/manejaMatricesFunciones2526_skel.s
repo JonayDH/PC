@@ -351,333 +351,7 @@ cadFin:         .asciiz "\n\nTermina el programa\n"
 
 	.text
 
-
-
-# int main() {
-main:
-# Tabla de registros:
-# matTrabajo -> $s0
-# opcion -> $s1
-# matT -> $s2
-# indFil -> $s3
-# indCol -> $s4
-# valor -> $f20
-# indC1 -> $s5
-# indC2 -> $s6
-# maximo -> $f22
-
-#   std::cout << std::setprecision(18); // Ignorar
-#   std::cout << "\nComienza programa manejo matrices con funciones";
-	li $v0,4
-	la $a0,cadTitulo
-	syscall
-
-#   structMat* matTrabajo = matrices[0];
-	lw $s0,matrices
-
-
-#   int opcion;
-#   do {
-	do:
-
-#     print_mat(matTrabajo);
-		move $a0,$s0
-		jal print_mat
-
-#     std::cout <<
-#     "(0) Terminar el programa\n"
-#     "(1) Cambiar la matriz de trabajo\n"
-#     "(3) Cambiar el valor de un elemento\n"
-#     "(4) Intercambiar un elemento con su opuesto\n"
-#     "(5) Procesa columnas\n"
-#     "(7) Encuentra maximo\n"
-#     "\nIntroduce opción elegida: ";
-		li $v0,4
-		la $a0,cadMenu
-		syscall
-
-#     std::cin >> opcion;
-		li $v0,5
-		syscall
-		move $s1,$v0
-
-#     int indFil;
-#     int indCol;
-#     switch (opcion) {
-		switch:
-
-			beq $s1,0,switch_case0
-			beq $s1,1,switch_case1
-			beq $s1,3,switch_case3
-			beq $s1,4,switch_case4
-			beq $s1,5,switch_case5
-			beq $s1,7,switch_case7
-			b switch_default
-			
-#       // Opción 0 //////////////////////////////////////////////////////////
-#       case 0:
-		switch_case0:
-
-#         std::cout << "\nEligida opción de salir";
-			li $v0,4
-			la $a0,cadSalir
-			syscall
-
-#         break; // salimos del switch
-			b switch_break
-
-#       // Opción 1 //////////////////////////////////////////////////////////
-#       case 1:
-		switch_case1:
-
-#         std::cout << "\nElije la matriz de trabajo: ";
-			li $v0,4
-			la $a0,cadEligeMat
-			syscall
-
-#         int matT;
-#         std::cin >> matT;
-			li $v0,5
-			syscall
-			move $s2,$v0
-
-#         if ((matT < 0) || (matT >= NUM_MATRICES)) {
-			if_switch_case1_condicion:
-
-				blt $s2,0,if_switch_case1_dentro
-				bge $s2,NUM_MATRICES,if_switch_case1_dentro
-				b if_switch_case1_fuera
-
-			if_switch_case1_dentro:
-
-#           std::cout << "Numero de matriz de trabajo incorrecto\n";
-				li $v0,4
-				la $a0,cadErrorMat
-				syscall
-
-#           break; // salimos del switch
-				b switch_break
-#         }
-			if_switch_case1_fuera:
-
-#         matTrabajo = matrices[matT];
-			la $t0,matrices
-			mul $t1,$s2,tamP
-			add $t0,$t0,$t1
-			lw $s0,0($t0)
-
-#         break; // salimos del switch
-			b switch_break
-
-#       // Opción 3 //////////////////////////////////////////////////////////
-#       case 3:
-		switch_case3:
-
-#         std::tie(indFil, indCol) = pideFilaYColumna(matTrabajo);
-			move $a0,$s0
-			jal pideFilaYColumna
-
-			move $s3,$v0
-			move $s4,$v1
-
-#         if (indFil < 0)
-			if_switch_case3_condicion:
-
-				blt $s3,$zero,if_switch_case3_dentro
-				b if_switch_case3_fuera
-
-			if_switch_case3_dentro:
-
-#           break; // salimos del switch
-				b switch_break
-
-			if_switch_case3_fuera:
-
-#         std::cout << "Nuevo valor para el elemento: ";
-			li $v0,4
-			la $a0,cadNuevoValor
-			syscall
-
-#         double valor;
-#         std::cin >> valor;
-			li $v0,7
-			syscall
-			mov.d $f20,$f0
-
-#         change_elto(matTrabajo, indFil, indCol, valor);
-			move $a0,$s0
-			move $a1,$s3
-			move $a2,$s4
-			mov.d $f12,$f20
-			jal change_elto
-
-#         break; // salimos del switch
-			b switch_break
-
-#       // Opción 4 //////////////////////////////////////////////////////////
-#       case 4:
-		switch_case4:
-
-#         std::tie(indFil, indCol) = pideFilaYColumna(matTrabajo);
-			move $a0,$s0
-			jal pideFilaYColumna
-
-			move $s3,$v0
-			move $s4,$v1
-
-#         if (indFil < 0)
-			if_switch_case4_condicion:
-
-				blt $s3,$zero,if_switch_case4_dentro
-				b if_switch_case4_fuera
-
-			if_switch_case4_dentro:
-
-#           break; // salimos del switch
-				b switch_break
-
-			if_switch_case4_fuera:
-
-#         intercambia(matTrabajo, indFil, indCol);
-			move $a0,$s0
-			move $a1,$s3
-			move $a2,$s4
-
-			jal intercambia
-
-#         break; // salimos del switch
-			b switch_break
-
-#       // Opción 5 //////////////////////////////////////////////////////////
-#       case 5:
-		switch_case5:
-
-#         std::cout << "\nPrimera columna a procesar: ";
-			li $v0,4
-			la $a0,cadPrimCol
-			syscall
-
-#         int indC1;
-#         indC1 = leeColumna(matTrabajo->nCol);
-			lw $t0,nCol($s0)
-			move $a0,$t0
-			jal leeColumna
-
-			move $s5,$v0
-
-#         if (indC1 < 0) {
-			if_switch_case5_condicion:
-
-				blt $s5,$zero,if_switch_case5_dentro
-				b if_switch_case5_fuera
-
-			if_switch_case5_dentro:
-
-#           break; // salimos del switch
-				b switch_break
-
-#         }
-			if_switch_case5_fuera:
-
-#         std::cout << "Segunda columna a procesar: ";
-			li $v0,4
-			la $a0,cadSegCol
-			syscall
-
-#         int indC2;
-#         indC2 = leeColumna(matTrabajo->nCol);
-			lw $t0,nCol($s0)
-			move $a0,$t0
-			jal leeColumna
-
-			move $s6,$v0
-
-#         if (indC2 < 0) {
-			if2_switch_case5_condicion:
-
-				blt $s6,$zero,if2_switch_case5_dentro
-				b if2_switch_case5_fuera
-
-			if2_switch_case5_dentro:
-
-#           break;  // salimos del switch
-				b switch_break
-
-#         }
-			if2_switch_case5_fuera:
-
-#         procesa_cols(matTrabajo, indC1, indC2);
-			move $a0,$s0
-			move $a1,$s5
-			move $a2,$s6
-
-			jal procesa_cols
-
-#         break;  // salimos del switch
-			b switch_break
-
-#       // Opción 7 //////////////////////////////////////////////////////////
-#       case 7:
-		switch_case7:
-
-#         double maximo;
-#         maximo = find_max(matTrabajo);
-			move $a0,$s0
-
-			jal find_max
-
-			mov.d $f22,$f0
-
-#         std::cout << "\nEl valor maximo en la matriz es " << maximo;
-			li $v0,4
-			la $a0,cadMax
-			syscall
-
-			li $v0,3
-			mov.d $f12,$f22
-			syscall
-
-#         break; // salimos del switch
-			b switch_break
-
-#       default:
-		switch_default:
-
-#         // Opción Incorrecta ////////////////////////////////////////////////
-#         std::cout << "Error: opcion incorrecta\n";
-			li $v0,4
-			la $a0,cadErrorOpcion
-			syscall
-
-#     }  // fin del switch
-		switch_break:
-
-#     std::cout << "\nTerminada la opción " << opcion;
-		li $v0,4
-		la $a0,cadTerOpc
-		syscall
-
-		li $v0,1
-		move $a0,$s1
-		syscall
-
-#   } while (opcion != 0);
-	do_while:
-
-		bne $s1,$zero,do
-
-	do_fin:
-
-#   std::cout << "\n\nTermina el programa\n";
-	li $v0,4
-	la $a0,cadFin
-	syscall
-# }
-
-	li $v0,10
-	syscall
-
-
+	
 
 # void print_mat(structMat* mat) {
 print_mat:
@@ -1426,3 +1100,329 @@ pideFilaYColumna:
 	jr $ra
 
 pideFilaYColumna__MARCAFIN:
+
+
+
+# int main() {
+main:
+# Tabla de registros:
+# matTrabajo -> $s0
+# opcion -> $s1
+# matT -> $s2
+# indFil -> $s3
+# indCol -> $s4
+# valor -> $f20
+# indC1 -> $s5
+# indC2 -> $s6
+# maximo -> $f22
+
+#   std::cout << std::setprecision(18); // Ignorar
+#   std::cout << "\nComienza programa manejo matrices con funciones";
+	li $v0,4
+	la $a0,cadTitulo
+	syscall
+
+#   structMat* matTrabajo = matrices[0];
+	lw $s0,matrices
+
+
+#   int opcion;
+#   do {
+	do:
+
+#     print_mat(matTrabajo);
+		move $a0,$s0
+		jal print_mat
+
+#     std::cout <<
+#     "(0) Terminar el programa\n"
+#     "(1) Cambiar la matriz de trabajo\n"
+#     "(3) Cambiar el valor de un elemento\n"
+#     "(4) Intercambiar un elemento con su opuesto\n"
+#     "(5) Procesa columnas\n"
+#     "(7) Encuentra maximo\n"
+#     "\nIntroduce opción elegida: ";
+		li $v0,4
+		la $a0,cadMenu
+		syscall
+
+#     std::cin >> opcion;
+		li $v0,5
+		syscall
+		move $s1,$v0
+
+#     int indFil;
+#     int indCol;
+#     switch (opcion) {
+		switch:
+
+			beq $s1,0,switch_case0
+			beq $s1,1,switch_case1
+			beq $s1,3,switch_case3
+			beq $s1,4,switch_case4
+			beq $s1,5,switch_case5
+			beq $s1,7,switch_case7
+			b switch_default
+			
+#       // Opción 0 //////////////////////////////////////////////////////////
+#       case 0:
+		switch_case0:
+
+#         std::cout << "\nEligida opción de salir";
+			li $v0,4
+			la $a0,cadSalir
+			syscall
+
+#         break; // salimos del switch
+			b switch_break
+
+#       // Opción 1 //////////////////////////////////////////////////////////
+#       case 1:
+		switch_case1:
+
+#         std::cout << "\nElije la matriz de trabajo: ";
+			li $v0,4
+			la $a0,cadEligeMat
+			syscall
+
+#         int matT;
+#         std::cin >> matT;
+			li $v0,5
+			syscall
+			move $s2,$v0
+
+#         if ((matT < 0) || (matT >= NUM_MATRICES)) {
+			if_switch_case1_condicion:
+
+				blt $s2,0,if_switch_case1_dentro
+				bge $s2,NUM_MATRICES,if_switch_case1_dentro
+				b if_switch_case1_fuera
+
+			if_switch_case1_dentro:
+
+#           std::cout << "Numero de matriz de trabajo incorrecto\n";
+				li $v0,4
+				la $a0,cadErrorMat
+				syscall
+
+#           break; // salimos del switch
+				b switch_break
+#         }
+			if_switch_case1_fuera:
+
+#         matTrabajo = matrices[matT];
+			la $t0,matrices
+			mul $t1,$s2,tamP
+			add $t0,$t0,$t1
+			lw $s0,0($t0)
+
+#         break; // salimos del switch
+			b switch_break
+
+#       // Opción 3 //////////////////////////////////////////////////////////
+#       case 3:
+		switch_case3:
+
+#         std::tie(indFil, indCol) = pideFilaYColumna(matTrabajo);
+			move $a0,$s0
+			jal pideFilaYColumna
+
+			move $s3,$v0
+			move $s4,$v1
+
+#         if (indFil < 0)
+			if_switch_case3_condicion:
+
+				blt $s3,$zero,if_switch_case3_dentro
+				b if_switch_case3_fuera
+
+			if_switch_case3_dentro:
+
+#           break; // salimos del switch
+				b switch_break
+
+			if_switch_case3_fuera:
+
+#         std::cout << "Nuevo valor para el elemento: ";
+			li $v0,4
+			la $a0,cadNuevoValor
+			syscall
+
+#         double valor;
+#         std::cin >> valor;
+			li $v0,7
+			syscall
+			mov.d $f20,$f0
+
+#         change_elto(matTrabajo, indFil, indCol, valor);
+			move $a0,$s0
+			move $a1,$s3
+			move $a2,$s4
+			mov.d $f12,$f20
+			jal change_elto
+
+#         break; // salimos del switch
+			b switch_break
+
+#       // Opción 4 //////////////////////////////////////////////////////////
+#       case 4:
+		switch_case4:
+
+#         std::tie(indFil, indCol) = pideFilaYColumna(matTrabajo);
+			move $a0,$s0
+			jal pideFilaYColumna
+
+			move $s3,$v0
+			move $s4,$v1
+
+#         if (indFil < 0)
+			if_switch_case4_condicion:
+
+				blt $s3,$zero,if_switch_case4_dentro
+				b if_switch_case4_fuera
+
+			if_switch_case4_dentro:
+
+#           break; // salimos del switch
+				b switch_break
+
+			if_switch_case4_fuera:
+
+#         intercambia(matTrabajo, indFil, indCol);
+			move $a0,$s0
+			move $a1,$s3
+			move $a2,$s4
+
+			jal intercambia
+
+#         break; // salimos del switch
+			b switch_break
+
+#       // Opción 5 //////////////////////////////////////////////////////////
+#       case 5:
+		switch_case5:
+
+#         std::cout << "\nPrimera columna a procesar: ";
+			li $v0,4
+			la $a0,cadPrimCol
+			syscall
+
+#         int indC1;
+#         indC1 = leeColumna(matTrabajo->nCol);
+			lw $t0,nCol($s0)
+			move $a0,$t0
+			jal leeColumna
+
+			move $s5,$v0
+
+#         if (indC1 < 0) {
+			if_switch_case5_condicion:
+
+				blt $s5,$zero,if_switch_case5_dentro
+				b if_switch_case5_fuera
+
+			if_switch_case5_dentro:
+
+#           break; // salimos del switch
+				b switch_break
+
+#         }
+			if_switch_case5_fuera:
+
+#         std::cout << "Segunda columna a procesar: ";
+			li $v0,4
+			la $a0,cadSegCol
+			syscall
+
+#         int indC2;
+#         indC2 = leeColumna(matTrabajo->nCol);
+			lw $t0,nCol($s0)
+			move $a0,$t0
+			jal leeColumna
+
+			move $s6,$v0
+
+#         if (indC2 < 0) {
+			if2_switch_case5_condicion:
+
+				blt $s6,$zero,if2_switch_case5_dentro
+				b if2_switch_case5_fuera
+
+			if2_switch_case5_dentro:
+
+#           break;  // salimos del switch
+				b switch_break
+
+#         }
+			if2_switch_case5_fuera:
+
+#         procesa_cols(matTrabajo, indC1, indC2);
+			move $a0,$s0
+			move $a1,$s5
+			move $a2,$s6
+
+			jal procesa_cols
+
+#         break;  // salimos del switch
+			b switch_break
+
+#       // Opción 7 //////////////////////////////////////////////////////////
+#       case 7:
+		switch_case7:
+
+#         double maximo;
+#         maximo = find_max(matTrabajo);
+			move $a0,$s0
+
+			jal find_max
+
+			mov.d $f22,$f0
+
+#         std::cout << "\nEl valor maximo en la matriz es " << maximo;
+			li $v0,4
+			la $a0,cadMax
+			syscall
+
+			li $v0,3
+			mov.d $f12,$f22
+			syscall
+
+#         break; // salimos del switch
+			b switch_break
+
+#       default:
+		switch_default:
+
+#         // Opción Incorrecta ////////////////////////////////////////////////
+#         std::cout << "Error: opcion incorrecta\n";
+			li $v0,4
+			la $a0,cadErrorOpcion
+			syscall
+
+#     }  // fin del switch
+		switch_break:
+
+#     std::cout << "\nTerminada la opción " << opcion;
+		li $v0,4
+		la $a0,cadTerOpc
+		syscall
+
+		li $v0,1
+		move $a0,$s1
+		syscall
+
+#   } while (opcion != 0);
+	do_while:
+
+		bne $s1,$zero,do
+
+	do_fin:
+
+#   std::cout << "\n\nTermina el programa\n";
+	li $v0,4
+	la $a0,cadFin
+	syscall
+# }
+
+	li $v0,10
+	syscall
