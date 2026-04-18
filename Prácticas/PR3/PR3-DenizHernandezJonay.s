@@ -1158,6 +1158,7 @@ main:
 
 			beq $s1,0,switch_case0
 			beq $s1,1,switch_case1
+			#beq $s1,2,switch_case2
 			beq $s1,3,switch_case3
 			beq $s1,4,switch_case4
 			beq $s1,5,switch_case5
@@ -1217,6 +1218,12 @@ main:
 			lw $s0,0($t2)
 
 #         break; // salimos del switch
+			b switch_break
+
+		switch_case2:
+
+			#aqui en medio va el código del switch_case2
+
 			b switch_break
 
 #       // Opción 3 //////////////////////////////////////////////////////////
