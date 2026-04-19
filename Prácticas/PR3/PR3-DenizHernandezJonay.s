@@ -1,3 +1,8 @@
+# Principios de computadores Curso 25-26
+#
+# Autor: Jonay Déniz Hernández
+# Fecha de última modificación: 21 de abril de 2026
+
 # // Manejo de matrices con funciones
 
 # #include <iostream>
