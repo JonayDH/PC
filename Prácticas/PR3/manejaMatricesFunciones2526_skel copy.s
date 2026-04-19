@@ -433,7 +433,7 @@ calcula_media:
 	mtc1 $s2,$f4
 	cvt.d.w $f4,$f4
 
-	add.d $f22,$f20,$f4
+	div.d $f22,$f20,$f4
 
 #   int numMayor = 0;
 	li $s5,0
@@ -517,7 +517,6 @@ calcula_media:
 	move $v1,$s6
 
 # push: $ra, $s0, $s1, $s2, $s3, $s4, $s5, $s6, $f20, $f22, $f24
-	addi $sp,-56
 	lw $ra,0($sp)
 	lw $s0,4($sp)
 	lw $s1,8($sp)
@@ -529,6 +528,7 @@ calcula_media:
 	l.d $f20,32($sp)
 	l.d $f22,40($sp)
 	l.d $f24,48($sp)
+	addi $sp,56
 
 	jr $ra
 # }
@@ -1400,6 +1400,43 @@ main:
 			lw $s0,0($t2)
 
 #         break; // salimos del switch
+			b switch_break
+
+		switch_case2:
+
+			move $a0,$s0
+			jal leeColumna
+			
+			move $s4,$v0
+
+			move $a0,$s0
+			move $a1,$s4
+			jal calcula_media
+
+			mov.d $f30,$f0
+			move $s7,$v0
+			move $s8,$v1
+
+			li $v0,3
+			mov.d $f12,$f30
+			syscall
+
+			li $v0,11
+			li $a0,10
+			syscall
+
+			li $v0,1
+			move $a0,$s7
+			syscall
+
+			li $v0,11
+			li $a0,10
+			syscall
+
+			li $v0,1
+			move $a0,$s8
+			syscall
+
 			b switch_break
 
 #       // Opción 3 //////////////////////////////////////////////////////////
