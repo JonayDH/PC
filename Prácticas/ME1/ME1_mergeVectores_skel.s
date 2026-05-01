@@ -286,8 +286,8 @@ merge:
 # Parámetros de salida:
 
 # Tabla de registros:
-# o1 -> $t0
-# o2 -> $t1
+# o1 -> $t6
+# o2 -> $t7
 # i -> $s4
 # j -> $s5
 
@@ -314,10 +314,12 @@ merge:
 
 	jal ordenado
 
+	move $t6,$v0
+
 #     if (o1 == 0) {
 	merge_if_condicion:
 
-		beqz $v0,merge_if_dentro
+		beqz $t6,merge_if_dentro
 		b merge_if_fuera
 
 	merge_if_dentro:
@@ -333,15 +335,17 @@ merge:
 	merge_if_fuera:
 
 #     int o2 = ordenado(v2,n2);
-	move $a0,$s0
-	move $a1,$s1
+	move $a0,$s2
+	move $a1,$s3
 
 	jal ordenado
+
+	move $t7,$v0
 
 #     if (o2 == 0) {
 	merge_if2_condicion:
 
-		beqz $v0,merge_if2_dentro
+		beqz $t7,merge_if2_dentro
 		b merge_if2_fuera
 
 	merge_if2_dentro:
@@ -356,27 +360,137 @@ merge:
 #     }
 	merge_if2_fuera:
 
+	li $s4,0
+	li $s5,0
 #     int i = 0; // índice para recorrer el v1
 #     int j = 0; // índice para recorrer el v2
+
 #     while ( ( i < n1) && (j < n2) ) {
+	merge_while_condicion:
+
+		slt $t0,$s4,$s1
+		slt $t1,$s5,$s3
+		and $t0,$t0,$t1
+
+		bnez $t0,merge_while_dentro
+		b merge_while_fuera
+
+	merge_while_dentro:
+
 #         if (v1[i] >= v2[j]) {
+		merge_if3_condicion:
+
+			mul $t0,$s4,sizeD
+			add $t0,$t0,$s0
+			l.d $f4,0($t0)
+
+			mul $t0,$s5,sizeD
+			add $t0,$t0,$s2
+			l.d $f6,0($t0)
+
+			c.lt.d $f4,$f6
+			bc1f merge_if3_dentro
+			b merge_if3_else
+
+		merge_if3_dentro:
+
 #             std::cout << v1[i] << ' ';
+			li $v0,3
+			mov.d $f12,$f4
+			syscall
+
+			li $v0,11
+			li $a0,' '
+			syscall
+
 #             i++;
+			addi $s4,1
+			b merge_if3_fuera
 #         }
 #         else {
+		merge_if3_else:
+
 #             std::cout << v2[j] << ' ';
+			li $v0,3
+			mov.d $f12,$f6
+			syscall
+
+			li $v0,11
+			li $a0,' '
+			syscall
+
 #             j++;
+			addi $s5,1
+
 #         }
+		merge_if3_fuera:
+
+		b merge_while_condicion
 #     }
+	merge_while_fuera:
+
 #     while ( i < n1) {
+	merge_while2_condicion:
+
+		blt $s4,$s1,merge_while2_dentro
+		b merge_while2_fuera
+
+	merge_while2_dentro:
+
 #         std::cout << v1[i] << ' ';
+		mul $t0,$s4,sizeD
+		add $t0,$t0,$s0
+		l.d $f4,0($t0)
+
+		li $v0,3
+		mov.d $f12,$f4
+		syscall
+
+		li $v0,11
+		li $a0,' '
+		syscall
+
 #         i++;
+		addi $s4,1
+		b merge_while2_condicion
+
 #     }
+	merge_while2_fuera:
+
+
 #     while ( j < n2) {
+	merge_while3_condicion:
+
+		blt $s5,$s3,merge_while3_dentro
+		b merge_while3_fuera
+
+	merge_while3_dentro:
+
 #         std::cout << v2[j] << ' ';
+		mul $t0,$s5,sizeD
+		add $t0,$t0,$s2
+		l.d $f4,0($t0)
+
+		li $v0,3
+		mov.d $f12,$f4
+		syscall
+
+		li $v0,11
+		li $a0,' '
+		syscall
+
 #         j++;
+		addi $s5,1
+		b merge_while3_condicion
+
 #     }
+	merge_while3_fuera:
+
 #     std::cout << '\n';
+	li $v0,11
+	li $a0,10
+	syscall
+
 #     return;
 # }
 	merge_pop:
