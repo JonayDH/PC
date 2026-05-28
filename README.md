@@ -2,6 +2,9 @@
 
 ## Índice:
 
+### Prácticas:
+Aqui están los ejercicios hechos en las prácticas evaluables de la asignatura
+
 ### Tutorías:
 Aqui se encuentran hechos los ejercicios de las tutorias académicas
 
