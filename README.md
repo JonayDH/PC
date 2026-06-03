@@ -14,6 +14,13 @@ Aqui se encuentran ejemplos de estructuras en c++ hechas con ensamblador
 ### instrucciones.s:
 Aqui se encuentran las instrucciones de MIPS explicadas una por una
 
+---
+
+## ⭐ Apoya el proyecto
+
+Si este repositorio te ha resultado útil, considera dejar una ⭐ en GitHub.
+Es una forma sencilla de mostrar apoyo y ayuda a que más estudiantes encuentren estos recursos.
+
 --- 
 
 ## Descargo de responsabilidad
